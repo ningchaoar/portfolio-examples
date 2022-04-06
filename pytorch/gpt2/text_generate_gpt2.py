@@ -43,6 +43,8 @@ def set_args():
 
     parser.add_argument("--model-name-or-path", type=str, default="gpt2",
                         help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(MODEL_CONFIG.keys()))
+    parser.add_argument('--tokenizer-type', type=int, default=0,
+                        help='0: transformers.tokenizer, 1: Megatron.tokenizer')
     parser.add_argument('--temperature', default=1.2,
                         type=float, required=False, help='temperature')
     parser.add_argument('--repetition-penalty', default=2.0,
@@ -233,8 +235,8 @@ def main():
         model.half()
     model = poptorch.inferenceModel(model.eval(), opts)
 
-    if args.model_name_or_path:
-        tokenizer = GPT2Tokenizer.from_pretrained(args.model_name_or_path)
+    if args.tokenizer_type == 0:
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     else:
         from tokenizer import build_megatron_tokenizer
         tokenizer = build_megatron_tokenizer(

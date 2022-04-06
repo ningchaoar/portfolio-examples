@@ -31,7 +31,7 @@ pip install --no-cache-dir horovod
 ```
 
 ## Run the tests (optional)
-Setup your environment as explained above and run `python3 -mv pytest` from the root folder.
+Setup your environment as explained above and run `python3 -m pytest` from the root folder.
 
 
 ## Quick start with generated mock dataset
@@ -147,7 +147,7 @@ python train_gpt2.py \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
     --layers-per-ipu 0 4 4 4 \
-    --matmul-proportion 0.05 0.10 0.10 0.10 \
+    --matmul-proportion 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 4 \
     --replication-factor 4 \
     --epochs 5 \
@@ -155,7 +155,8 @@ python train_gpt2.py \
     --batches-per-step 8 \
     --batch-size 1 \
     --enable-sequence-serialized True \
-    --embedding-serialization-factor 8 \
+    --remap-logit True \
+    --embedding-serialization-factor 4 \
     --recompute-checkpoint-every-layer True \
     --enable-half-partials True \
     --train-path 'generated' \
@@ -177,7 +178,7 @@ python train_gpt2.py \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
     --layers-per-ipu 0 3 3 3 3 4 4 4 \
-    --matmul-proportion 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 \
+    --matmul-proportion 0.30 0.15 0.15 0.15 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 8 \
     --replication-factor 2 \
     --epochs 5 \
@@ -185,7 +186,8 @@ python train_gpt2.py \
     --batches-per-step 8 \
     --batch-size 1 \
     --enable-sequence-serialized True \
-    --embedding-serialization-factor 8 \
+    --remap-logit True \
+    --embedding-serialization-factor 4 \
     --recompute-checkpoint-every-layer True \
     --enable-half-partials True \
     --train-path 'generated' \
@@ -206,15 +208,16 @@ python train_gpt2.py \
     --learning-rate 0.00015 \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
-    --layers-per-ipu 0 5 5 5 5 5 5 6 \
-    --matmul-proportion 0.40 0.12 0.15 0.15 0.15 0.15 0.15 0.10 \
+    --layers-per-ipu 1 5 5 5 5 5 5 5 \
+    --matmul-proportion 0.15 0.12 0.15 0.15 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 8 \
     --replication-factor 2 \
     --epochs 5 \
     --gradient-accumulation 4096 \
     --batches-per-step 8 \
     --batch-size 1 \
-    --enable-sequence-serialized False \
+    --enable-sequence-serialized True \
+    --remap-logit True \
     --embedding-serialization-factor 8 \
     --recompute-checkpoint-every-layer True \
     --enable-half-partials True \
