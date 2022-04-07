@@ -11,7 +11,7 @@ python train_gpt2.py \
     --matmul-proportion 0.15 0.12 0.15 0.15 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 8 \
     --replication-factor 2 \
-    --epochs 5 \
+    --epochs 20 \
     --gradient-accumulation 4096 \
     --batches-per-step 8 \
     --batch-size 1 \

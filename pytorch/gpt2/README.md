@@ -27,7 +27,6 @@ This should create `custom_ops.so`.
 Install the required packages:
 ```
 pip install -r requirements.txt
-pip install --no-cache-dir horovod
 ```
 
 ## Run the tests (optional)
@@ -122,7 +121,9 @@ python3 ./data/wikipedia_preprocess.py --input-file-path <chosen-folder-for-extr
 Now you should get the `.pkl` data, which will be used in the pretraining.
 
 ## Run the pretraining application
-**Notice**: The default scripts are used to get benchmarks for throughput only. You must passing path to processed data files to `--train-path` to start the actual pretraining, you may also need to specify the `--save-model-path` to save checkpoints. Further arguments are described in the source file `arguments.py`.
+**Notice**: The default scripts are used to get benchmarks for throughput only. You must passing path to processed data files to `--train-path` to start the actual pretraining, you may also need to specify the `--save-model-path` to save checkpoints. It is recommended to use `--gradient-accumulation 512` when pretraining on the wikipedia dataset for better convergence. It takes 20 epochs(about 0.15 days per epoch) to reach a relative low LM loss together with the SOTA accuracy on evaluation tasks.
+
+Further arguments are described in the source file `arguments.py`.
 
 There are four GPT2 models:
 * GPT2 Small - 12 layers (transformer blocks), 117 million parameters
@@ -243,27 +244,8 @@ python write_into_tfrecord.py
 cd tfrecords
 for f in *.tfrecord; do python3 -m tfrecord.tools.tfrecord2idx $f `basename $f .tfrecord`.index; done
 ```
-and use the tfrecord datasets by
-```
-python train_gpt2.py \
-    --model gpt2-medium \
-    --optimizer LAMB \
-    --learning-rate 0.006 \
-    --lr-schedule linear \
-    --layers-per-ipu 1 7 8 8 \
-    --matmul-proportion 0.2 0.15 0.15 0.15 \
-    --ipus-per-replica 4 \
-    --replication-factor 1 \
-    --gradient-accumulation 1024 \
-    --batches-per-step 8 \
-    --batch-size 4 \
-    --embedding-serialization-factor 6 \
-    --recompute-checkpoint-every-layer True \
-    --enable-half-partials True \
-    --train-path 'tfrecord' \
-    --tfrecord-path ./data/tfrecords/*.tfrecord \
-    --epochs 3
-```
+then add `--train-path 'tfrecord'` and `--tfrecord-path <path>/*.tfrecord` to the command lines.
+
 
 ## Megatron dataset (optional)
 We also support mmap dataset which is used by NVIDIA's Megatron, you should first follow the [instruction](https://github.com/ningchaoar/Megatron-LM#data-preprocessing) to get `my-gpt2_text_document.bin` and `my-gpt2_text_document.idx`.
@@ -308,7 +290,7 @@ This task is interactive. You can enter one sentence such as "My name is " and i
 
 | Arguments | Meaning |
 | ---- | ---- | 
-| --model-name-or-path | Loading pretrained GPT2-small checkpoint from huggingface.co. The default is gpt2 |
+| --model-name-or-path | Path to pre-trained model or shortcut names from huggingface.co. The default is 'gpt2' |
 | --fp16 | Whether to use fp16 model for this task|
 | --single-ipu | Whether to use single IPU for this task |
 | --poptorch_loop| Whether to use poptorch_loop to optimize the latency, only supported on single ipu|
