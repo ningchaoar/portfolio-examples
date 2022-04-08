@@ -156,6 +156,7 @@ if __name__ == "__main__":
 
     logger("Model initializing")
     model_config = GPT2Config.from_json_file(os.path.join(file_dir, MODEL_CONFIG[args.model]))
+    model_config.n_positions = args.max_len
     model = GTP2Wrapper(args, model_config).half().train()
 
     logger("Arguments: {}".format(args))

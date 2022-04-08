@@ -226,6 +226,39 @@ python train_gpt2.py \
     --replicated-tensor-sharding True \
     --compile-only False
 ```
+
+### Run GPT2-large(SL=1024)
+This script runs the 762M parameter GPT2 pretraining, with sequence length=1024.
+```
+bash run/pretraining_large_1024.sh
+```
+or
+```
+python train_gpt2.py \
+    --model gpt2-large \
+    --max-len 1024 \
+    --optimizer AdamW \
+    --learning-rate 0.00015 \
+    --lr-schedule cosine \
+    --lr-warmup 0.01 \
+    --layers-per-ipu 0 2 2 2 2 2 2 2 2 3 3 3 3 3 3 2 \
+    --matmul-proportion 0.15 0.15 0.2 0.2 0.2 0.15 0.15 0.2 0.2 0.15 0.2 0.2 0.2 0.15 0.15 0.2 \
+    --ipus-per-replica 16 \
+    --replication-factor 1 \
+    --epochs 20 \
+    --gradient-accumulation 8192 \
+    --batches-per-step 8 \
+    --batch-size 1 \
+    --enable-sequence-serialized True \
+    --remap-logit True \
+    --embedding-serialization-factor 4 \
+    --recompute-checkpoint-every-layer True \
+    --enable-half-partials True \
+    --train-path 'generated' \
+    --replicated-tensor-sharding False \
+    --compile-only False
+```
+
 ### Run GPT2-large by PopRun
 This script runs the 762M parameter GPT2 distributed pretraining using PopRun, which can scale the application from POD16 to POD256 and further.
 
