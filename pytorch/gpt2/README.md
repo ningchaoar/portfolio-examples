@@ -144,14 +144,14 @@ python train_gpt2.py \
     --model gpt2 \
     --max-len 1024 \
     --optimizer AdamW \
-    --learning-rate 0.00004 \
+    --learning-rate 0.00015 \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
     --layers-per-ipu 0 4 4 4 \
     --matmul-proportion 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 4 \
     --replication-factor 4 \
-    --epochs 5 \
+    --epochs 20 \
     --gradient-accumulation 2048 \
     --batches-per-step 8 \
     --batch-size 1 \
@@ -175,14 +175,14 @@ python train_gpt2.py \
     --model gpt2-medium \
     --max-len 1024 \
     --optimizer AdamW \
-    --learning-rate 0.00004 \
+    --learning-rate 0.00015 \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
     --layers-per-ipu 0 3 3 3 3 4 4 4 \
     --matmul-proportion 0.30 0.15 0.15 0.15 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 8 \
     --replication-factor 2 \
-    --epochs 5 \
+    --epochs 20 \
     --gradient-accumulation 4096 \
     --batches-per-step 8 \
     --batch-size 1 \
@@ -213,7 +213,7 @@ python train_gpt2.py \
     --matmul-proportion 0.15 0.12 0.15 0.15 0.15 0.15 0.15 0.15 \
     --ipus-per-replica 8 \
     --replication-factor 2 \
-    --epochs 5 \
+    --epochs 20 \
     --gradient-accumulation 4096 \
     --batches-per-step 8 \
     --batch-size 1 \
