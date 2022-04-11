@@ -242,7 +242,7 @@ python train_gpt2.py \
     --lr-schedule cosine \
     --lr-warmup 0.01 \
     --layers-per-ipu 0 2 2 2 2 2 2 2 2 3 3 3 3 3 3 2 \
-    --matmul-proportion 0.15 0.15 0.2 0.2 0.2 0.15 0.15 0.2 0.2 0.15 0.2 0.2 0.2 0.15 0.15 0.2 \
+    --matmul-proportion 0.2 0.15 0.2 0.2 0.2 0.15 0.15 0.2 0.2 0.15 0.2 0.2 0.2 0.15 0.15 0.2 \
     --ipus-per-replica 16 \
     --replication-factor 1 \
     --epochs 20 \
