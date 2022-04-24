@@ -60,6 +60,15 @@ def get_options(config):
     opts.Training.gradientAccumulation(config.gradient_accumulation)
     opts.Training.accumulationAndReplicationReductionType(
         poptorch.ReductionType.Mean)
+
+    # Enable automatic loss scaling
+    # Note that this is an experimental feature. Note also that it expects
+    # accumulationAndReplicationReductionType to be set to Mean as above,
+    # and for accumulation by the optimizer to be done in half precision
+    # using accum_type=torch.float16 during optimizer instatiation.
+    if config.auto_loss_scaling is True:
+        opts.Training.setAutomaticLossScaling(True)
+
     opts.outputMode(poptorch.OutputMode.Sum)
     opts.TensorLocations.setOptimizerLocation(poptorch.TensorLocationSettings()
                                               .useOnChipStorage(not config.optimizer_state_offchip)

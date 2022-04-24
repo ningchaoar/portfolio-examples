@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2021 Graphcore Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +13,14 @@
 # limitations under the License.
 
 import glob
-import pickle
-import random
+import os
 import argparse
-
+from transformers import BertTokenizer, BertTokenizerFast, GPT2TokenizerFast
+import pickle
 import numpy as np
-
 from tqdm import tqdm
-from transformers import GPT2TokenizerFast
+import random
+
 
 class WikicorpusTextFormatting:
     def __init__(self, wiki_path, output_filename, recursive=False):
@@ -57,11 +56,15 @@ class WikicorpusTextFormatting:
 def main(args):
     # Step 1: merge the data into one txt file
     wiki_path = args.input_file_path
-    output_filename = args.output_file_path + '/wikicorpus_en_one_article_per_line.txt'
+    output_filename = args.output_file_path + \
+        '/wikicorpus_en_one_article_per_line.txt'
+    # wiki_formatter = WikicorpusTextFormatting(wiki_path, output_filename, recursive=True)
+    # wiki_formatter.merge()
 
     # Step 2: tokenize the articles
     output_path = args.output_file_path + '/wikicorpus_en_one_article_per_line.pkl'
-    print("preprocessing data,data path:{}, save path:{}".format(output_filename, output_path))
+    print("preprocessing data,data path:{}, save path:{}".format(
+        output_filename, output_path))
 
     if args.use_bpe:
         print('Generate and use BPE tokenizer...')
@@ -71,7 +74,8 @@ def main(args):
         tokenizer = Tokenizer(models.BPE())
 
         # Customize pre-tokenization and decoding
-        tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=True)
+        tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(
+            add_prefix_space=True)
         tokenizer.decoder = decoders.ByteLevel()
         tokenizer.post_processor = processors.ByteLevel(trim_offsets=True)
 
@@ -91,7 +95,8 @@ def main(args):
         # Use the generated file
         tokenizer = Tokenizer.from_file("gpt2-bpe-tokenizer.json")
     else:
-        tokenizer = GPT2TokenizerFast.from_pretrained('gpt2', add_prefix_space=False)
+        tokenizer = GPT2TokenizerFast.from_pretrained(
+            'gpt2', add_prefix_space=False)
 
     data = open(output_filename, 'rb')
     train_data = data.readlines()
@@ -107,11 +112,14 @@ def main(args):
                 if args.use_bpe:
                     input_ids += tokenizer.encode(utterance).ids
                 else:
-                    input_ids += tokenizer.encode(utterance, add_special_tokens=False)
-                    input_ids += tokenizer.encode('<|endoftext|>')  # end with eod
+                    input_ids += tokenizer.encode(utterance,
+                                                  add_special_tokens=False)
+                    # end with eod
+                    input_ids += tokenizer.encode('<|endoftext|>')
             if len(input_ids) >= args.min_length:
                 text_len.append(len(input_ids))
                 text_list.append(input_ids)
+                # text_list += input_ids
     random.shuffle(text_list)
     len_mean = np.mean(text_len)
     len_median = np.median(text_len)
@@ -119,14 +127,17 @@ def main(args):
     with open(output_path, "wb") as f:
         pickle.dump(text_list, f)
     print("finish preprocessing data,the result is stored in {}".format(output_path))
-    print("mean of text len:{},median of text len:{},max len:{}".format(len_mean, len_median, len_max))
+    print("mean of text len:{},median of text len:{},max len:{}".format(
+        len_mean, len_median, len_max))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input-file-path', required=True, type=str)
     parser.add_argument('--output-file-path', required=True, type=str)
-    parser.add_argument('--use-bpe', action='store_true', help='use bpe or GPT2 tokenizer')
-    parser.add_argument('--min-length', default=10, type=int, required=False, help='minimal length of dataset')
+    parser.add_argument('--use-bpe', action='store_true',
+                        help='use bpe or GPT2 tokenizer')
+    parser.add_argument('--min-length', default=10, type=int,
+                        required=False, help='minimal length of dataset')
     args = parser.parse_args()
     main(args)

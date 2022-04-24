@@ -226,7 +226,6 @@ python train_gpt2.py \
     --replicated-tensor-sharding True \
     --compile-only False
 ```
-
 ### Run GPT2-large(SL=1024)
 This script runs the 762M parameter GPT2 pretraining, with sequence length=1024.
 ```

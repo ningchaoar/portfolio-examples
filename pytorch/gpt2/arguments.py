@@ -76,6 +76,8 @@ def set_args():
                         help='Learning rate value.')
     parser.add_argument('--loss-scaling', default=50000.0, type=float, required=False,
                         help='Loss scaling factor (recommend using powers of 2).')
+    parser.add_argument('--auto-loss-scaling', type=str_to_bool, nargs='?', const=True, default=False,
+                        help='Enable automatic loss scaling for half precision training. Note that this is an experimental feature.')
     parser.add_argument('--lr-warmup', default=0.1, type=float, required=False,
                         help='fraction of train steps(or --lr-decay-steps) to linearly warmup learning rate over.')
     parser.add_argument('--lr-warmup-steps', default=None, type=int, required=False,
@@ -90,7 +92,7 @@ def set_args():
                         help='Option to checkpoint model after every n training epochs.')
     parser.add_argument('--save-per-steps', default=None, type=int, required=False,
                         help='Option to checkpoint model after every n training steps.')
-    parser.add_argument('--gradient-accumulation', default=10, type=int, required=False,
+    parser.add_argument('--gradient-accumulation', default=1, type=int, required=False,
                         help='Number of gradients to accumulate before updating the weights.')
     parser.add_argument('--use-wandb', type=str_to_bool, nargs='?', const=True, default=False,
                         help='Enabling logging to Weights and Biases.')
@@ -147,5 +149,8 @@ def set_args():
         hvd.broadcast(torch.Tensor([args.seed]), root_rank=0)
     else:
         args.use_popdist = False
+
+    if args.auto_loss_scaling:
+        args.loss_scaling = 1.0
 
     return args

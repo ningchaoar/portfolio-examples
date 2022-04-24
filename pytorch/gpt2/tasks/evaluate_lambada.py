@@ -141,6 +141,7 @@ def main():
     opts.setAvailableMemoryProportion(mem_prop)
     opts.setExecutionStrategy(
         poptorch.ShardedExecution(poptorch.AutoStage.AutoIncrement))
+    opts._Popart.set("saveInitializersToFile", "weights.bin")
     if args.executable_cache_dir:
         opts.enableExecutableCaching(args.executable_cache_dir)
     if args.tokenizer_type == 0:
